@@ -15,12 +15,22 @@ class BooksApp extends Component {
   }
 
   componentDidMount() {
+    this.getAllBooks()
+  }
+
+  getAllBooks() {
     BooksAPI.getAll().then((books)=> {
       this.setState({ books })
     })
   }
 
-
+  updateBook = (book, newShelf) => {
+    /* move selected book to new shelf, then refresh the shelves*/
+    BooksAPI.update(book, newShelf)
+    .then(() => {
+      this.getAllBooks()
+    })
+  }
 
   render() {
 
@@ -30,15 +40,15 @@ class BooksApp extends Component {
         <div className="list-books-title">
             <h1>MyReads</h1>
         </div>
-        
+
         <Route exact path="/search" component={SearchBook} />
         
         <Route exact path="/" render={() => (
           <div className="list-books">
             <div className="list-books-content">
-              <ListBooks books={this.state.books} shelf="currentlyReading"/>
-              <ListBooks books={this.state.books} shelf="wantToRead"/>
-              <ListBooks books={this.state.books} shelf="read"/>
+              <ListBooks books={this.state.books} onUpdateBook={this.updateBook} shelf="Currently Reading"/>
+              <ListBooks books={this.state.books} onUpdateBook={this.updateBook} shelf="Want to Read"/>
+              <ListBooks books={this.state.books} onUpdateBook={this.updateBook} shelf="Read"/>
               <div className="open-search">
                 <Link to="/search">Add a book</Link>
               </div>
