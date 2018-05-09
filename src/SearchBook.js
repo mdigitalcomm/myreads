@@ -19,6 +19,15 @@ class SearchBook extends Component {
     })
   }
 
+  updateFoundBook = (newBook, shelf) => {
+    /*Mark selected as reading, want to read or read*/
+    BooksAPI.update(newBook, shelf)
+    .then(() => 
+      this.searchBook(this.state.query))
+  }
+
+
+
   render() {
     const { foundBooks } = this.state
     
@@ -44,7 +53,10 @@ class SearchBook extends Component {
                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})`}}>
                     </div>
                     <div className="book-shelf-changer">
-                      <select value={book.shelf || "none"} onChange={(event) => this.props.onUpdateBook(book,event.target.value)}>
+                      <select value={book.shelf} onChange={(event) => {
+                        this.props.onUpdateShelf(book,event.target.value)
+                        this.updateFoundBook(book, event.target.value)
+                      }}>
                                         <option value="none" disabled>Move to...</option>
                                         <option value="currentlyReading">Currently Reading</option>
                                         <option value="wantToRead">Want to Read</option>
