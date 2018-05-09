@@ -13,8 +13,17 @@ class SearchBook extends Component {
   /*update searchbox and books results*/
   searchBook = (query) => {
     this.setState({ query: query.trim() })
-    BooksAPI.search(query).then(books => {
-      console.log(books)
+    BooksAPI.search(query)
+    .then(books => {      
+      /*If the book found is on current shelf already, set the state for its shelf*/
+      for (let book of books) {
+        book.shelf = "none"
+        for (let currentBook of this.props.currentBooks) {
+          if (book.id === currentBook.id) {
+            book.shelf = currentBook.shelf
+          } 
+        }         
+      }
       this.setState({foundBooks: books})
     })
   }
@@ -22,15 +31,19 @@ class SearchBook extends Component {
   updateFoundBook = (newBook, shelf) => {
     /*Mark selected as reading, want to read or read*/
     BooksAPI.update(newBook, shelf)
-    .then(() => 
-      this.searchBook(this.state.query))
+    .then(() => {
+      newBook.shelf = shelf
+      let updatedBooks = this.state.foundBooks.filter(book=> book.id !== newBook.id)
+      updatedBooks.push(newBook)
+      this.setState({ foundBooks: updatedBooks }) 
+      console.log(this.state.foundBooks)
+    })
   }
 
 
 
   render() {
     const { foundBooks } = this.state
-    
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -53,7 +66,8 @@ class SearchBook extends Component {
                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})`}}>
                     </div>
                     <div className="book-shelf-changer">
-                      <select value={book.shelf} onChange={(event) => {
+                      <select value={book.shelf}
+                        onChange={(event) => {
                         this.props.onUpdateShelf(book,event.target.value)
                         this.updateFoundBook(book, event.target.value)
                       }}>
