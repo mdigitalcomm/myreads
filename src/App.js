@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { Route } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-
-// import * as BooksAPI from './BooksAPI'
 import ListBooks from './ListBooks'
 import SearchBook from './SearchBook'
 import * as BooksAPI from './BooksAPI'
@@ -11,7 +9,7 @@ import './App.css'
 
 class BooksApp extends Component {
   state = {
-    books: []
+    currentBooks: []
   }
 
   componentDidMount() {
@@ -20,16 +18,15 @@ class BooksApp extends Component {
 
   getAllBooks() {
     BooksAPI.getAll().then((books)=> {
-      this.setState({ books })
+      this.setState({ currentBooks: books })
+      console.log(this.state.currentBooks)
     })
   }
 
-  updateBook = (book, newShelf) => {
+  updateShelf = (book, newShelf) => {
     /* move selected book to new shelf, then refresh the shelves*/
     BooksAPI.update(book, newShelf)
-    .then(() => {
-      this.getAllBooks()
-    })
+    .then(() => this.getAllBooks())
   }
 
 
@@ -44,15 +41,15 @@ class BooksApp extends Component {
         </div>
 
         <Route exact path="/search" render={() => (
-          <SearchBook onUpdateBook={this.updateBook}/>
+          <SearchBook onUpdateShelf={this.updateShelf}/>
         )}/>
         
         <Route exact path="/" render={() => (
           <div className="list-books">
             <div className="list-books-content">
-              <ListBooks books={this.state.books} onUpdateBook={this.updateBook} shelf="Currently Reading"/>
-              <ListBooks books={this.state.books} onUpdateBook={this.updateBook} shelf="Want to Read"/>
-              <ListBooks books={this.state.books} onUpdateBook={this.updateBook} shelf="Read"/>
+              <ListBooks currentBooks={this.state.currentBooks} onUpdateShelf={this.updateShelf} shelf="Currently Reading"/>
+              <ListBooks currentBooks={this.state.currentBooks} onUpdateShelf={this.updateShelf} shelf="Want to Read"/>
+              <ListBooks currentBooks={this.state.currentBooks} onUpdateShelf={this.updateShelf} shelf="Read"/>
               <div className="open-search">
                 <Link to="/search">Add a book</Link>
               </div>

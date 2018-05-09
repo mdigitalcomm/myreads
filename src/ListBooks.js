@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 class ListBooks extends Component {
 
 	render() {
-		let shelvedBooks = this.props.books.filter((obj)=> obj.shelf.toLowerCase() === this.props.shelf.replace(/\s/g, '').toLowerCase())
+		let shelvedBooks = this.props.currentBooks.filter((obj)=> obj.shelf.toLowerCase() === this.props.shelf.replace(/\s/g, '').toLowerCase())
 		return (												
 			<div className="bookshelf">
 				<h2 className="bookshelf-title">
@@ -18,7 +18,7 @@ class ListBooks extends Component {
 										<div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})`}}>
 										</div>
 										<div className="book-shelf-changer">
-											<select value={book.shelf} onChange={(event) => this.props.onUpdateBook(book,event.target.value)}>
+											<select value={book.shelf} onChange={(event) => this.props.onUpdateShelf(book,event.target.value)}>
 				                                <option value="none" disabled>Move to...</option>
 				                                <option value="currentlyReading">Currently Reading</option>
 				                                <option value="wantToRead">Want to Read</option>
