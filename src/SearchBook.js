@@ -25,7 +25,7 @@ class SearchBook extends Component {
         }         
       }
       this.setState({foundBooks: books})
-    })
+    })   
   }
 
   updateFoundBook = (newBook, shelf) => {
