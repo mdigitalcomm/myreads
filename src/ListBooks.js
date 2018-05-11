@@ -4,7 +4,8 @@ import Book from './Book'
 class ListBooks extends Component {
 
 	render() {
-		let shelvedBooks = this.props.currentBooks.filter((obj)=> obj.shelf.toLowerCase() === this.props.shelf.replace(/\s/g, '').toLowerCase())
+		const { currentBooks, shelf, onUpdateShelf } = this.props
+		let shelvedBooks = currentBooks.filter((obj)=> obj.shelf.toLowerCase() === shelf.replace(/\s/g, '').toLowerCase())
 		return (												
 			<div className="bookshelf">
 				<h2 className="bookshelf-title">
@@ -13,7 +14,7 @@ class ListBooks extends Component {
 				<div className="bookshelf-books">
 					<ol className="books-grid">
 						{shelvedBooks.map((shelvedBook) => (	
-							<Book key={shelvedBook.id} book={shelvedBook} onUpdateShelf={this.props.onUpdateShelf} />
+							<Book key={shelvedBook.id} book={shelvedBook} onUpdateShelf={onUpdateShelf} />
 							
 						))}
 					</ol>

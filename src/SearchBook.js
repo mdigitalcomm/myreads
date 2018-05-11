@@ -37,15 +37,15 @@ class SearchBook extends Component {
       let updatedBooks = this.state.foundBooks.filter(book=> book.id !== newBook.id)
       updatedBooks.push(newBook)
       this.setState({ foundBooks: updatedBooks })
+      /*Move selected book on shelves page*/
       this.props.onUpdateShelf(newBook, shelf)
-      console.log(this.state.foundBooks)
     })
   }
 
 
 
   render() {
-    const { foundBooks } = this.state
+    const { foundBooks, query } = this.state
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -54,7 +54,7 @@ class SearchBook extends Component {
             <input 
               type="text" 
               placeholder="Search books"
-              value={this.state.query}
+              value={query}
               onChange={(event) => this.searchBook(event.target.value)}
             />
           </div>
