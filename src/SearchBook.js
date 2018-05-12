@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import PropTypes from 'prop-types'
+import sortBy from 'sort-by'
 import Book from './Book'
 
 class SearchBook extends Component {
@@ -53,6 +54,7 @@ class SearchBook extends Component {
 
   render() {
     const { foundBooks, query } = this.state
+    foundBooks.sort(sortBy('title'))
     return (
       <div className="search-books">
         <div className="search-books-bar">
