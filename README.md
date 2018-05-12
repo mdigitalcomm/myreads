@@ -1,6 +1,6 @@
 # MyReads Project
 
-This project allows you to select and categorize books you have read, are currently reading, or want to read. This application is bootstraped by React and provides an API server and client library that you will use to persist information as you interact with the application. 
+This project allows you to select and categorize books you have read, are currently reading, or want to read. This application is bootstraped with Create React App and provides an API server and client library that you will use to persist information as you interact with the application. 
 
 ## How to run?
 
