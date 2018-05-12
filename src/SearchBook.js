@@ -5,7 +5,6 @@ import Book from './Book'
 
 class SearchBook extends Component {
 
-
   state = {
     query: '',
     foundBooks: []
@@ -14,19 +13,28 @@ class SearchBook extends Component {
   /*update searchbox and books results*/
   searchBook = (query) => {
     this.setState({ query: query.trim() })
-    BooksAPI.search(query)
-    .then(books => {      
-      /*If the book found is on current shelf already, set the state for its shelf*/
-      for (let book of books) {
-        book.shelf = "none"
-        for (let currentBook of this.props.currentBooks) {
-          if (book.id === currentBook.id) {
-            book.shelf = currentBook.shelf
-          } 
-        }         
-      }
-      this.setState({foundBooks: books})
-    })
+    if (query) {
+      BooksAPI.search(query)
+      .then(books => {      
+        /*If the book found matches one on the shelves, mark its shelf*/
+        if (books.length > 0) {
+          for (let book of books) {
+            book.shelf = "none"
+            for (let currentBook of this.props.currentBooks) {
+              if (book.id === currentBook.id) {
+                book.shelf = currentBook.shelf
+              } 
+            }         
+          }
+          this.setState({foundBooks: books})
+        } else {
+          this.setState({foundBooks: []})
+        }
+        
+      })
+    } else {
+      this.setState({foundBooks: []})
+    }
   }
 
   updateFoundBook = (newBook, shelf) => {
@@ -41,8 +49,6 @@ class SearchBook extends Component {
       this.props.onUpdateShelf(newBook, shelf)
     })
   }
-
-
 
   render() {
     const { foundBooks, query } = this.state
@@ -59,14 +65,18 @@ class SearchBook extends Component {
             />
           </div>
         </div>
+
         <div className="search-books-results">
+          {query && (
+            <div>Found {foundBooks.length} books!</div>
+          )}
+
           <ol className="books-grid">
             {foundBooks.map((foundBook) => ( 
               <Book key={foundBook.id}
                 book={foundBook} 
                 onUpdateShelf={this.updateFoundBook} 
-              />
-              
+              />              
             ))}
           </ol>
         </div>

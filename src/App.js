@@ -20,7 +20,7 @@ class BooksApp extends Component {
   getAllBooks() {
     BooksAPI.getAll().then((books)=> {
       this.setState({ currentBooks: books })
-      console.log(this.state.currentBooks)
+      console.log(books)
     })
   }
 
@@ -40,14 +40,21 @@ class BooksApp extends Component {
         </div>
 
         <Route exact path="/search" render={() => (
-          <SearchBook currentBooks={currentBooks} onUpdateShelf={this.updateShelf}/>
+          <SearchBook 
+            currentBooks={currentBooks} 
+            onUpdateShelf={this.updateShelf}
+          />
         )}/>
         
         <Route exact path="/" render={() => (
           <div className="list-books">
             <div className="list-books-content">
               {shelves.map((shelf) => (
-                <ListBooks key={shelf} currentBooks={currentBooks} onUpdateShelf={this.updateShelf} shelf={shelf} />
+                <ListBooks 
+                  key={shelf} 
+                  currentBooks={currentBooks} 
+                  onUpdateShelf={this.updateShelf} 
+                  shelf={shelf} />
               ))}
               <div className="open-search">
                 <Link to="/search">Add a book</Link>
@@ -59,7 +66,6 @@ class BooksApp extends Component {
       </div>
     )
   }
-}
-  
+}  
 
 export default BooksApp
