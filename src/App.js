@@ -9,7 +9,8 @@ import './App.css'
 
 class BooksApp extends Component {
   state = {
-    currentBooks: []
+    currentBooks: [],
+    shelves:["Currently Reading", "Want to Read", "Read"]
   }
 
   componentDidMount() {
@@ -19,7 +20,6 @@ class BooksApp extends Component {
   getAllBooks() {
     BooksAPI.getAll().then((books)=> {
       this.setState({ currentBooks: books })
-      console.log(this.state.currentBooks)
     })
   }
 
@@ -29,10 +29,8 @@ class BooksApp extends Component {
     .then(() => this.getAllBooks())
   }
 
-
-
   render() {
-
+    const { shelves, currentBooks } = this.state
     return(
       <div className="app">
         
@@ -41,15 +39,22 @@ class BooksApp extends Component {
         </div>
 
         <Route exact path="/search" render={() => (
-          <SearchBook currentBooks={this.state.currentBooks} onUpdateShelf={this.updateShelf}/>
+          <SearchBook 
+            currentBooks={currentBooks} 
+            onUpdateShelf={this.updateShelf}
+          />
         )}/>
         
         <Route exact path="/" render={() => (
           <div className="list-books">
             <div className="list-books-content">
-              <ListBooks currentBooks={this.state.currentBooks} onUpdateShelf={this.updateShelf} shelf="Currently Reading"/>
-              <ListBooks currentBooks={this.state.currentBooks} onUpdateShelf={this.updateShelf} shelf="Want to Read"/>
-              <ListBooks currentBooks={this.state.currentBooks} onUpdateShelf={this.updateShelf} shelf="Read"/>
+              {shelves.map((shelf) => (
+                <ListBooks 
+                  key={shelf} 
+                  currentBooks={currentBooks} 
+                  onUpdateShelf={this.updateShelf} 
+                  shelf={shelf} />
+              ))}
               <div className="open-search">
                 <Link to="/search">Add a book</Link>
               </div>
@@ -60,7 +65,6 @@ class BooksApp extends Component {
       </div>
     )
   }
-}
-  
+}  
 
 export default BooksApp

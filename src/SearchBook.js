@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
+import Book from './Book'
 
 class SearchBook extends Component {
-
 
   state = {
     query: '',
@@ -12,20 +12,29 @@ class SearchBook extends Component {
 
   /*update searchbox and books results*/
   searchBook = (query) => {
-    this.setState({ query: query.trim() })
-    BooksAPI.search(query)
-    .then(books => {      
-      /*If the book found is on current shelf already, set the state for its shelf*/
-      for (let book of books) {
-        book.shelf = "none"
-        for (let currentBook of this.props.currentBooks) {
-          if (book.id === currentBook.id) {
-            book.shelf = currentBook.shelf
-          } 
-        }         
-      }
-      this.setState({foundBooks: books})
-    })   
+    this.setState({ query })
+    if (query) {
+      BooksAPI.search(query)
+      .then(books => {      
+        /*If the book found matches one on the shelves, mark its shelf*/
+        if (books.length > 0) {
+          for (let book of books) {
+            book.shelf = "none"
+            for (let currentBook of this.props.currentBooks) {
+              if (book.id === currentBook.id) {
+                book.shelf = currentBook.shelf
+              } 
+            }         
+          }
+          this.setState({foundBooks: books})
+        } else {
+          this.setState({foundBooks: []})
+        }
+        
+      })
+    } else {
+      this.setState({foundBooks: []})
+    }
   }
 
   updateFoundBook = (newBook, shelf) => {
@@ -35,15 +44,14 @@ class SearchBook extends Component {
       newBook.shelf = shelf
       let updatedBooks = this.state.foundBooks.filter(book=> book.id !== newBook.id)
       updatedBooks.push(newBook)
-      this.setState({ foundBooks: updatedBooks }) 
-      console.log(this.state.foundBooks)
+      this.setState({ foundBooks: updatedBooks })
+      /*Move selected book on shelves page*/
+      this.props.onUpdateShelf(newBook, shelf)
     })
   }
 
-
-
   render() {
-    const { foundBooks } = this.state
+    const { foundBooks, query } = this.state
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -51,40 +59,24 @@ class SearchBook extends Component {
           <div className="search-books-input-wrapper">
             <input 
               type="text" 
-              placeholder="Search by title or author"
-              value={this.state.query}
+              placeholder="Search books"
+              value={query}
               onChange={(event) => this.searchBook(event.target.value)}
             />
           </div>
         </div>
+
         <div className="search-books-results">
+          {query && (
+            <div>Found {foundBooks.length} books!</div>
+          )}
+
           <ol className="books-grid">
-            {foundBooks.map((book) => ( 
-              <li key={book.id}>
-                <div className="book">      
-                  <div className="book-top">  
-                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})`}}>
-                    </div>
-                    <div className="book-shelf-changer">
-                      <select value={book.shelf}
-                        onChange={(event) => {
-                        this.props.onUpdateShelf(book,event.target.value)
-                        this.updateFoundBook(book, event.target.value)
-                      }}>
-                                        <option value="select" disabled>Move to...</option>
-                                        <option value="currentlyReading">Currently Reading</option>
-                                        <option value="wantToRead">Want to Read</option>
-                                        <option value="read">Read</option>
-                                        <option value="none">None</option>
-                                      </select>
-                    </div>
-                  </div>
-                  <div className="book-title">{book.title}</div>
-                  <div className="book-authors">{book.authors}</div>
-                  
-                </div>
-              </li>
-              
+            {foundBooks.map((foundBook) => ( 
+              <Book key={foundBook.id}
+                book={foundBook} 
+                onUpdateShelf={this.updateFoundBook} 
+              />              
             ))}
           </ol>
         </div>
