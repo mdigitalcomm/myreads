@@ -12,7 +12,7 @@ class SearchBook extends Component {
 
   /*update searchbox and books results*/
   searchBook = (query) => {
-    this.setState({ query: query.trim() })
+    this.setState({ query })
     if (query) {
       BooksAPI.search(query)
       .then(books => {      
