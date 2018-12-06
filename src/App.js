@@ -15,9 +15,9 @@ class BooksApp extends Component {
 
   componentDidMount() {
     this.getAllBooks()
-  }
+  } 
 
-  getAllBooks() {
+  getAllBooks = () => {
     BooksAPI.getAll().then((books)=> {
       this.setState({ currentBooks: books })
     })
@@ -31,6 +31,7 @@ class BooksApp extends Component {
 
   render() {
     const { shelves, currentBooks } = this.state
+
     return(
       <div className="app">
         
